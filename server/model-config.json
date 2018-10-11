@@ -14,7 +14,8 @@
     ]
   },
   "User": {
-    "dataSource": "mongoDs"
+    "dataSource": "mongoDs",
+    "public": false
   },
   "AccessToken": {
     "dataSource": "mongoDs",
@@ -22,17 +23,21 @@
   },
   "ACL": {
     "dataSource": "mongoDs",
-    "public": false
+    "public": true
   },
   "RoleMapping": {
     "dataSource": "mongoDs",
-    "public": false,
+    "public": true,
     "options": {
       "strictObjectIDCoercion": true
     }
   },
   "Role": {
     "dataSource": "mongoDs",
-    "public": false
+    "public": true
+  },
+  "employee": {
+    "dataSource": "mongoDs",
+    "public": true
   }
 }
