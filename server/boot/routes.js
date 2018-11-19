@@ -1,7 +1,7 @@
 'use strict';
 
 const KeycloakConnect = require('keycloak-connect');
-const env = require('../../env')();
+const env = require('../../env');
 const keycloakConfig = env.keycloakConfig;
 const session = require('express-session');
 const memoryStore = new session.MemoryStore();
