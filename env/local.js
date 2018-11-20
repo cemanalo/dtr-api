@@ -1,4 +1,8 @@
 'use strict';
+const elasticsearch = require('elasticsearch');
+const esClient = new elasticsearch.Client({
+  host: 'http://localhost:9200',
+});
 
 module.exports = {
   'keycloakConfig': {
@@ -10,4 +14,5 @@ module.exports = {
     'confidential-port': 0,
   },
   'frontendBaseUrl': 'http://localhost:8080',
+  'esClient': esClient,
 };
