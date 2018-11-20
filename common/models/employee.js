@@ -42,4 +42,29 @@ module.exports = function(Employee) {
       throw new Error(err);
     });
   });
+
+  Employee.remoteMethod('search', {
+    accepts: {
+      arg: 'text',
+      type: 'string',
+    },
+    returns: {
+      arg: 'result',
+      type: 'Object',
+    },
+    http: {
+      verb: 'get',
+    },
+  });
+
+  Employee.search = (text, cb) => {
+    console.log(`Employee search: ${text}`);
+    esClient.search({
+      index: 'employee',
+      type: 'docs',
+      q: text,
+    }).then(resp =>{
+      cb(null, resp);
+    });
+  };
 };
