@@ -6,6 +6,10 @@
     "validateUpsert": true
   },
   "properties": {
+    "workdayId": {
+      "type": "number",
+      "required": true
+    },
     "firstName": {
       "type": "string",
       "required": true

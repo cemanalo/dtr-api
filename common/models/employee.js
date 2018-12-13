@@ -2,23 +2,37 @@
 const esClient = require('../../env').esClient;
 
 module.exports = function(Employee) {
-  Employee.observe('after save', (ctx, next) => {
+  Employee.observe('after save', async (ctx, next) => {
     console.log('after save being run');
     console.log(ctx.instance);
 
     const id = ctx.instance.id;
     delete ctx.instance.id;
 
-    esClient.create({
+    const exists = await esClient.exists({
       index: 'employee',
       type: 'docs',
-      body: ctx.instance,
       id: id.toString(),
-    }).then(resp => {
+    });
+
+    let method = 'update';
+    const payload = {
+      index: 'employee',
+      type: 'docs',
+      body: {},
+      id: id.toString(),
+    };
+
+    if (exists) {
+      payload.body.doc = ctx.instance;
+    } else {
+      method = 'create';
+      payload.body = ctx.instance;
+    }
+
+    esClient[method](payload).then(resp => {
       console.log('ok from es', resp);
       next();
-    }).catch(err => {
-      throw new Error(err);
     });
   });
 
@@ -44,10 +58,20 @@ module.exports = function(Employee) {
   });
 
   Employee.remoteMethod('search', {
-    accepts: {
-      arg: 'text',
-      type: 'string',
-    },
+    accepts: [
+      {
+        arg: 'q',
+        type: 'string',
+      },
+      {
+        arg: 'page',
+        type: 'string',
+      },
+      {
+        arg: 'size',
+        type: 'string',
+      },
+    ],
     returns: {
       arg: 'result',
       type: 'Object',
@@ -57,12 +81,19 @@ module.exports = function(Employee) {
     },
   });
 
-  Employee.search = (text, cb) => {
-    console.log(`Employee search: ${text}`);
+  Employee.search = (q = '*', from = '0', size = '10', cb) => {
+    console.log(`Employee search: ${q}, page: ${from}, size=${size}`);
     esClient.search({
       index: 'employee',
       type: 'docs',
-      q: text,
+      q,
+      from,
+      size,
+      
+      body: {
+        sort: [{'lastName': 'asc'}],
+        
+      },
     }).then(resp =>{
       cb(null, resp);
     });
