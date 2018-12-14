@@ -64,7 +64,7 @@ module.exports = function(Employee) {
         type: 'string',
       },
       {
-        arg: 'page',
+        arg: 'from',
         type: 'string',
       },
       {
@@ -81,7 +81,7 @@ module.exports = function(Employee) {
     },
   });
 
-  Employee.search = (q = '*', from = '0', size = '10', cb) => {
+  Employee.search = (q = '*', from = 0, size = 25, cb) => {
     console.log(`Employee search: ${q}, page: ${from}, size=${size}`);
     esClient.search({
       index: 'employee',
@@ -89,10 +89,8 @@ module.exports = function(Employee) {
       q,
       from,
       size,
-      
       body: {
         sort: [{'lastName': 'asc'}],
-        
       },
     }).then(resp =>{
       cb(null, resp);
